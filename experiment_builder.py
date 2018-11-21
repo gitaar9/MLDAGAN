@@ -66,6 +66,8 @@ class ExperimentBuilder(object):
         self.init = tf.global_variables_initializer()
         self.spherical_interpolation = True
         self.tensorboard_update_interval = int(self.total_train_batches/100/self.num_gpus)
+        self.tensorboard_update_interval = self.tensorboard_update_interval if self.tensorboard_update_interval else 1
+        print('!'*100, '\n', self.tensorboard_update_interval, self.total_train_batches, self.num_gpus)
         self.total_epochs = 200
 
         if self.continue_from_epoch == -1:
