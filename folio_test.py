@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 
-def load_folio_in_right_format(size=(32, 32)):
+def load_folio_in_right_format(size):
     path = "./datasets/Folio Leaf Dataset/Folio/"
     classes = os.listdir(path)
     all_data = []
@@ -15,18 +15,13 @@ def load_folio_in_right_format(size=(32, 32)):
         for filename in image_filenames:
             image_path = os.path.join(path_to_class_dir, filename)
             image = Image.open(image_path)
-            image = image.resize((32, 32), Image.ANTIALIAS)
+            image = image.resize(size, Image.ANTIALIAS)
             np_image = np.array(image)
             class_data.append(np_image)
         all_data.append(np.array(class_data))
     return np.array(all_data)
 
 
-data = load_folio_in_right_format()
-print(data[0][0][0][0])
-data = data / 255.0
-print(data[0][0][0][0])
-
-print(data.shape)
-for class_data in data:
-    print(class_data.shape)
+size = (32, 32,)
+data = load_folio_in_right_format(size)
+np.save('folio{}x{}pix'.format(size[0], size[1]), data)
