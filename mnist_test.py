@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def load_mnist_in_right_format(num_sumples=100):
+def load_mnist_in_right_format(num_sumples):
     mnist = tf.keras.datasets.mnist
 
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -22,4 +22,7 @@ def load_mnist_in_right_format(num_sumples=100):
     return np.array(data)
 
 
-print(load_mnist_in_right_format(300).shape)
+data = load_mnist_in_right_format(100)
+print(data.shape)
+for class_data in data:
+    print(class_data.shape)

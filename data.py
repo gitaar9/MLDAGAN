@@ -1,5 +1,8 @@
 import numpy as np
 import tensorflow as tf
+import os
+from PIL import Image
+
 np.random.seed(2591)
 
 
@@ -376,5 +379,37 @@ class MNISTDAGANDataset(DAGANDataset):
         self.x = self.load_mnist_in_right_format(200)
         self.x = self.x / np.max(self.x)
         x_train, x_test, x_val = self.x[:7], self.x[7:9], self.x[9:]
+        x_train = x_train[:last_training_class_index]
+        return x_train, x_test, x_val
+
+
+class FolioDAGANDataset(DAGANDataset):
+    def __init__(self, batch_size, last_training_class_index, reverse_channels, num_of_gpus, gen_batches):
+        super(FolioDAGANDataset, self).__init__(batch_size, last_training_class_index, reverse_channels, num_of_gpus,
+                                                gen_batches)
+
+    @staticmethod
+    def load_folio_in_right_format(size=(32, 32)):
+        path = "./datasets/Folio Leaf Dataset/Folio/"
+        classes = os.listdir(path)
+        all_data = []
+        for idx, class_name in enumerate(classes):
+            print("({}/32) Loading {} images...".format(idx+1, class_name))
+            path_to_class_dir = os.path.join(path, class_name)
+            image_filenames = os.listdir(path_to_class_dir)
+            class_data = []
+            for filename in image_filenames:
+                image_path = os.path.join(path_to_class_dir, filename)
+                image = Image.open(image_path)
+                image = image.resize((32, 32), Image.ANTIALIAS)
+                np_image = np.array(image)
+                class_data.append(np_image)
+            all_data.append(np.array(class_data))
+        return np.array(all_data)
+
+    def load_dataset(self, last_training_class_index):
+        self.x = self.load_folio_in_right_format()
+        self.x = self.x / np.max(self.x)
+        x_train, x_test, x_val = self.x[:26], self.x[26:29], self.x[29:]
         x_train = x_train[:last_training_class_index]
         return x_train, x_test, x_val
